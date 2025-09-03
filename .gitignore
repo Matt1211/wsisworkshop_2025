@@ -55,3 +55,20 @@ _ReSharper.*/
 
 # .NET tool folder
 .config/
+
+# Vue.js specific
+/node_modules/
+/dist/
+/coverage/
+.local
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+
+# Flowbite specific (if applicable, covers common IDE and OS files)
+/flowbite.config.js
+
+# Additional files (if any) that Flowbite might generate during
