@@ -1,13 +1,9 @@
-<script setup lang="ts">
-import WelcomeFlow from './components/WelcomeFlow.vue'
-</script>
-
 <template>
-  <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
-    <WelcomeFlow />
-  </div>
+  <main class="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <MealManager />
+  </main>
 </template>
 
-<style>
-@import './assets/main.css';
-</style>
+<script setup>
+import MealManager from './components/MealManager.vue';
+</script>
