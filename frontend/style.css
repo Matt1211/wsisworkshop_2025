@@ -1,0 +1,327 @@
+/* ============================================= */
+/* ============= GLOBAL & SETUP ================ */
+/* ============================================= */
+:root {
+    --papaya-orange: #FF8C42;
+    --mango-yellow: #FFC107;
+    --leafy-green: #4CAF50;
+    --sky-blue: #2196F3;
+    --bg-light: #FFF8E1;
+    --text-dark: #3E2723;
+    --card-bg: #FFFFFF;
+    --border-color: #E0E0E0;
+    --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+#app-container {
+    display: flex;
+    height: 100vh;
+    padding: 20px;
+    gap: 20px;
+}
+
+/* ============================================= */
+/* ============= PANEL LAYOUT ================== */
+/* ============================================= */
+.panel {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#left-panel {
+    flex: 0 0 350px; /* Fixed width for the left panel on desktop */
+}
+
+#right-panel {
+    flex: 1;
+    padding: 24px;
+    overflow-y: auto;
+}
+
+.panel-header, .view-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.view-header { padding: 0 0 20px 0; }
+#meal-list-container {
+    overflow-y: auto;
+    padding: 10px;
+    flex-grow: 1;
+}
+
+/* ============================================= */
+/* ============== COMPONENTS =================== */
+/* ============================================= */
+.button {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Poppins', sans-serif;
+}
+.button:hover { transform: translateY(-2px); }
+.button:disabled {
+    background-color: #BDBDBD;
+    cursor: not-allowed;
+    transform: none;
+}
+.primary-button { background-color: var(--papaya-orange); color: white; }
+.primary-button:hover { box-shadow: 0 4px 10px rgba(255, 140, 66, 0.4); }
+.secondary-button { background-color: #f0f0f0; color: var(--text-dark); }
+.success-button { background-color: var(--leafy-green); color: white; }
+.danger-button { background-color: #E53935; color: white; }
+
+.card {
+    background-color: #fafafa;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+input[type="text"], textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #757575;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* ============================================= */
+/* ========== SPECIFIC ELEMENT STYLES ========== */
+/* ============================================= */
+#meal-list {
+    list-style-type: none;
+}
+.meal-list-item {
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s, box-shadow 0.2s;
+    border: 1px solid var(--border-color);
+}
+.meal-list-item:hover {
+    background-color: #f5f5f5;
+    box-shadow: var(--shadow-hover);
+}
+.meal-list-item.active {
+    background-color: var(--papaya-orange);
+    color: white;
+    border-color: var(--papaya-orange);
+}
+.meal-list-item h4 { margin-bottom: 5px; }
+.meal-list-item p { font-size: 0.9em; opacity: 0.8; }
+
+#image-preview-container {
+    text-align: center;
+    margin-top: 20px;
+}
+#image-preview {
+    max-width: 100%;
+    max-height: 250px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+#food-item-list {
+    list-style-type: none;
+    margin-top: 10px;
+}
+.food-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background-color: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+.food-item p { font-weight: 600; }
+.food-item span { font-size: 0.9em; color: #616161; }
+
+#nutrition-totals {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* Meal Detail View */
+#meal-detail-view .detail-header { margin-bottom: 20px; }
+#meal-detail-view .detail-header h3 { color: var(--papaya-orange); }
+#meal-detail-view .detail-description { margin-bottom: 20px; font-style: italic; }
+#meal-detail-view .individual-food-card {
+    border-left: 4px solid var(--mango-yellow);
+    margin-bottom: 15px;
+    padding-left: 15px;
+}
+
+/* Loader animation */
+#loader {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid var(--sky-blue);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ============================================= */
+/* ================= MODAL ==================== */
+/* ============================================= */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    background-color: var(--card-bg);
+    z-index: 1;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.modal-footer {
+    padding: 20px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    position: sticky;
+    bottom: 0;
+    background-color: var(--card-bg);
+}
+
+#close-modal {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+#close-modal:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================= */
+/* ============== RESPONSIVENESS =============== */
+/* ============================================= */
+@media (max-width: 900px) {
+    #app-container {
+        flex-direction: column;
+        height: auto;
+    }
+    #left-panel {
+        flex: 0 0 auto; /* Allow it to size based on content */
+        height: 40vh; /* Give it a fixed height to prevent it taking over */
+    }
+    #right-panel {
+        height: auto;
+    }
+}
+
+@media (max-width: 600px) {
+    body { font-size: 14px; }
+    #app-container { padding: 10px; gap: 10px; }
+    .panel-header, .view-header {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+    }
+    .header-actions {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+    }
+    #right-panel { padding: 15px; }
+}
