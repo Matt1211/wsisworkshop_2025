@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     let compressedImageFile = null;
     let compressedImageFiles = [];
+    let activeMealId = null;
 
     // ============================================= //
     // ================ DOM SELECTORS ================ //
@@ -29,13 +30,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const exportBtn = document.getElementById('export-btn');
 
     // Meal Creator View Elements
-    const mealCreatorView = document.getElementById('meal-creator-view');
+    const mealCreatorView = document.getElementById('meal-creator-view'); // Note: This ID is not in the HTML, might be a leftover
     const mealNameInput = document.getElementById('meal-name');
     const mealDescriptionInput = document.getElementById('meal-description');
     const uploadTriggerBtn = document.getElementById('upload-trigger-btn');
     const imageUploadInput = document.getElementById('image-upload-input');
     const imagePreviewContainer = document.getElementById('image-preview-container');
-    const imagePreview = document.getElementById('image-preview');
+    // const imagePreview = document.getElementById('image-preview'); // Note: This ID was removed from HTML
     const analyzeImageBtn = document.getElementById('analyze-image-btn');
     const loader = document.getElementById('loader');
     const currentMealFoodsList = document.getElementById('food-item-list');
@@ -57,31 +58,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const fetchMeals = async () => {
         try {
             const response = await fetch(`${API_BASE_URL}/refeicoes`);
-            if (!response.ok) throw new Error('Failed to fetch meals.');
+            if (!response.ok) throw new Error('Falha ao buscar refeições.');
             return await response.json();
         } catch (error) {
-            console.error("Error fetching meals:", error);
-            return []; // Retorna um array vazio em caso de erro
+            console.error("Erro ao buscar refeições:", error);
+            return [];
         }
     };
 
     const createMeal = async (mealData, imageFiles) => {
         const formData = new FormData();
-
         formData.append('refeicaoJson', JSON.stringify(mealData));
-
         imageFiles.forEach(file => {
             formData.append('imagens', file, file.name || 'image.jpg');
         });
-
         const response = await fetch(`${API_BASE_URL}/refeicoes`, {
             method: 'POST',
             body: formData
         });
-
         if (!response.ok) {
             const errorText = await response.text();
-            throw new Error(`Failed to create meal: ${errorText}`);
+            throw new Error(`Falha ao criar refeição: ${errorText}`);
         }
         return await response.json();
     };
@@ -90,24 +87,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const response = await fetch(`${API_BASE_URL}/refeicoes/${mealId}`, {
             method: 'DELETE'
         });
-        if (!response.ok) throw new Error('Failed to delete meal.');
+        if (!response.ok) throw new Error('Falha ao deletar refeição.');
     };
 
     const analyzeImagesApi = async (files) => {
         const formData = new FormData();
         files.forEach(file => {
-            // O backend espera o nome 'imagens' para a coleção de arquivos
             formData.append('imagens', file, file.name || 'image.jpg');
         });
-
         const response = await fetch(`${API_BASE_URL}/refeicoes/analyze`, {
             method: 'POST',
             body: formData
         });
-
         if (!response.ok) {
             const errorText = await response.text();
-            throw new Error(`Failed to analyze images: ${errorText}`);
+            throw new Error(`Falha ao analisar imagens: ${errorText}`);
         }
         return await response.json();
     };
@@ -119,7 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
             li.className = 'food-item';
             li.innerHTML = `
             <div>
-                {/* ATUALIZADO: Acessa as propriedades diretamente */}
                 <p>${food.Nome}</p>
                 <span>${food.Calorias.toFixed(0)} kcal</span>
             </div>
@@ -134,9 +127,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateTotalNutrition = () => {
         const totals = currentMeal.Alimentos.reduce((totals, food) => {
             totals.Calorias += food.Calorias;
-            totals.Proteinas += food.Proteinas;
-            totals.GordurasTotais += food.GordurasTotais;
-            totals.Carboidratos += food.Carboidratos;
+            totals.Proteinas += parseFloat(food.Proteinas);
+            totals.GordurasTotais += parseFloat(food.GordurasTotais);
+            totals.Carboidratos += parseFloat(food.Carboidratos);
             return totals;
         }, { Calorias: 0, Proteinas: 0, GordurasTotais: 0, Carboidratos: 0 });
 
@@ -151,39 +144,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderMealDetailView = (meal) => {
         const totalNutrition = meal.Alimentos.reduce((totals, food) => {
             totals.Calorias += food.Calorias;
-            totals.Proteinas += food.Proteinas;
-            totals.GordurasTotais += food.GordurasTotais;
-            totals.Carboidratos += food.Carboidratos;
+            totals.Proteinas += parseFloat(food.Proteinas);
+            totals.GordurasTotais += parseFloat(food.GordurasTotais);
+            totals.Carboidratos += parseFloat(food.Carboidratos);
             return totals;
         }, { Calorias: 0, Proteinas: 0, GordurasTotais: 0, Carboidratos: 0 });
 
         mealDetailView.innerHTML = `
         <div class="view-header">
-            {/* ATUALIZADO: Usa 'Nome' e 'Descricao' */}
             <h3 class="detail-header">${meal.Nome}</h3>
-            <button class="button danger-button" id="delete-meal-btn">Delete Meal</button>
+            <button class="button danger-button" id="delete-meal-btn">Deletar Refeição</button>
         </div>
-        <p class="detail-description">${meal.Descricao || 'No description provided.'}</p>
+        <p class="detail-description">${meal.Descricao || 'Nenhuma descrição fornecida.'}</p>
         <div class="card">
-            <h4>Total Meal Nutrition</h4>
+            <h4>Nutrientes Totais da Refeição</h4>
             <div id="nutrition-totals">
-                {/* ATUALIZADO: Acessa os totais calculados */}
-                <p><strong>Calories:</strong> ${totalNutrition.Calorias.toFixed(0)} kcal</p>
-                <p><strong>Protein:</strong> ${totalNutrition.Proteinas.toFixed(1)} g</p>
-                <p><strong>Fat:</strong> ${totalNutrition.GordurasTotais.toFixed(1)} g</p>
-                <p><strong>Carbs:</strong> ${totalNutrition.Carboidratos.toFixed(1)} g</p>
+                <p><strong>Calorias:</strong> ${totalNutrition.Calorias.toFixed(0)} kcal</p>
+                <p><strong>Proteínas:</strong> ${totalNutrition.Proteinas.toFixed(1)} g</p>
+                <p><strong>Gorduras:</strong> ${totalNutrition.GordurasTotais.toFixed(1)} g</p>
+                <p><strong>Carboidratos:</strong> ${totalNutrition.Carboidratos.toFixed(1)} g</p>
             </div>
         </div>
-        <h4>Individual Foods</h4>
-        {/* ATUALIZADO: Mapeia sobre 'Alimentos' e usa novas propriedades */}
+        <h4>Alimentos Individuais</h4>
         ${meal.Alimentos.map(food => `
             <div class="card individual-food-card">
                 <strong>${food.Nome}</strong>
                 <ul>
-                    <li>Calories: ${food.Calorias.toFixed(0)} kcal</li>
-                    <li>Protein: ${food.Proteinas.toFixed(1)} g</li>
-                    <li>Fat: ${food.GordurasTotais.toFixed(1)} g</li>
-                    <li>Carbs: ${food.Carboidratos.toFixed(1)} g</li>
+                    <li>Calorias: ${food.Calorias.toFixed(0)} kcal</li>
+                    <li>Proteínas: ${food.Proteinas.toFixed(1)} g</li>
+                    <li>Gorduras: ${food.GordurasTotais.toFixed(1)} g</li>
+                    <li>Carboidratos: ${food.Carboidratos.toFixed(1)} g</li>
                 </ul>
             </div>
         `).join('')}
@@ -206,9 +196,8 @@ document.addEventListener('DOMContentLoaded', () => {
         mealModal.classList.add('hidden');
         resetCurrentMeal();
     };
-
+    
     newMealBtn.addEventListener('click', openModal);
-
 
     saveMealBtn.addEventListener('click', async () => {
         currentMeal.Nome = mealNameInput.value;
@@ -221,11 +210,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             await createMeal(currentMeal, compressedImageFiles);
-
             closeModal();
             await initializeApp();
             alert('Refeição salva com sucesso!');
-
         } catch (error) {
             console.error("Falha ao salvar a refeição:", error);
             alert(`Ocorreu um erro ao salvar a refeição: ${error.message}`);
@@ -292,15 +279,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (event.target.files.length > 5) {
             alert("Você pode enviar no máximo 5 imagens por vez.");
-            imageUploadInput.value = ''; // Limpa a seleção
+            imageUploadInput.value = '';
             return;
         }
 
         loader.classList.remove('hidden');
         imagePreviewContainer.classList.add('hidden');
         const previewGrid = document.getElementById('image-preview-grid');
-        previewGrid.innerHTML = ''; // Limpa pré-visualizações antigas
-        compressedImageFiles = []; // Limpa a lista de arquivos
+        previewGrid.innerHTML = '';
+        compressedImageFiles = [];
 
         const options = {
             maxSizeMB: 0.5,
@@ -309,13 +296,10 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         try {
-            // Processa todas as imagens selecionadas em paralelo
             const compressionPromises = Array.from(event.target.files).map(file => imageCompression(file, options));
             const compressedFiles = await Promise.all(compressionPromises);
+            compressedImageFiles = compressedFiles;
 
-            compressedImageFiles = compressedFiles; // Salva os arquivos comprimidos
-
-            // Cria e exibe a pré-visualização para cada imagem
             compressedFiles.forEach(file => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
@@ -347,13 +331,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             const foodsFromApi = await analyzeImagesApi(compressedImageFiles);
-
             foodsFromApi.forEach(food => {
                 if (currentMeal.Alimentos.length < 5) {
                     currentMeal.Alimentos.push(food);
                 }
             });
-
             renderCurrentMealFoods();
 
             imagePreviewContainer.classList.add('hidden');
@@ -371,37 +353,45 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const deleteMeal = async (mealId) => {
-        if (confirm('Are you sure you want to delete this meal?')) {
+        if (confirm('Você tem certeza que deseja deletar esta refeição?')) {
             try {
                 await deleteMealApi(mealId);
                 activeMealId = null;
                 await initializeApp();
-                showView('creator');
+                showView('creator'); // Note: showView function is not defined, assuming it exists
             } catch (error) {
-                console.error("Failed to delete meal:", error);
-                alert("An error occurred while deleting the meal.");
+                console.error("Falha ao deletar a refeição:", error);
+                alert("Ocorreu um erro ao deletar a refeição.");
             }
         }
     };
 
     exportBtn.addEventListener('click', () => {
         if (meals.length === 0) {
-            alert("There are no meals to export.");
+            alert("Não há refeições para exportar.");
             return;
         }
 
         let csvContent = "data:text/csv;charset=utf-8,";
-        csvContent += "Meal Name,Description,Calories,Protein (g),Fat (g),Carbs (g),Foods\n";
+        csvContent += "Nome da Refeição,Descrição,Calorias,Proteínas (g),Gorduras (g),Carboidratos (g),Alimentos\n";
 
         meals.forEach(meal => {
-            const foodNames = meal.foods.map(f => f.name).join('; ');
+            const foodNames = meal.Alimentos.map(f => f.Nome).join('; ');
+            const totalNutrition = meal.Alimentos.reduce((totals, food) => {
+                totals.Calorias += food.Calorias;
+                totals.Proteinas += parseFloat(food.Proteinas);
+                totals.GordurasTotais += parseFloat(food.GordurasTotais);
+                totals.Carboidratos += parseFloat(food.Carboidratos);
+                return totals;
+            }, { Calorias: 0, Proteinas: 0, GordurasTotais: 0, Carboidratos: 0 });
+            
             const row = [
-                meal.name,
-                meal.description,
-                meal.totalNutrition.calories.toFixed(0),
-                meal.totalNutrition.protein.toFixed(1),
-                meal.totalNutrition.fat.toFixed(1),
-                meal.totalNutrition.carbs.toFixed(1),
+                `"${meal.nome}"`,
+                `"${meal.descricao}"`,
+                totalNutrition.Calorias.toFixed(0),
+                totalNutrition.Proteinas.toFixed(1),
+                totalNutrition.GordurasTotais.toFixed(1),
+                totalNutrition.Carboidratos.toFixed(1),
                 `"${foodNames}"`
             ].join(',');
             csvContent += row + "\n";
@@ -410,7 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "my_meals.csv");
+        link.setAttribute("download", "minhas_refeicoes.csv");
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -432,21 +422,35 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCurrentMealFoods();
     };
 
-    [mealNameInput, mealDescriptionInput].forEach(input => {
-        input.addEventListener('keyup', () => {
-            saveMealBtn.disabled = !(mealNameInput.value.trim() && currentMeal.foods.length > 0);
-        });
-    });
-    // A bit complex logic for disabled state, let's simplify for now
-    // Re-evaluating on food add/remove is needed
-    // Simple solution: check on input change and when adding/removing food.
-    // For now we will just enable it on the fly with the keyup event and another check will be added
+    const showView = (viewName) => {
+        // This function is missing in the original code but is called in deleteMeal.
+        // Assuming 'creator' is the default view and it's always visible in the right panel.
+        // For 'detail', the content is rendered into mealDetailView.
+        if (viewName === 'detail') {
+            // mealDetailView is already populated by renderMealDetailView
+        } else {
+            // Logic to show a default/creator view might be needed here.
+            // For now, we'll clear the detail view to simulate switching back.
+            mealDetailView.innerHTML = '<p>Selecione uma refeição da lista para ver os detalhes, ou crie uma nova.</p>';
+        }
+    };
+    
+    const updateSaveButtonState = () => {
+        saveMealBtn.disabled = !(mealNameInput.value.trim() && currentMeal.Alimentos.length > 0);
+    };
 
+    mealNameInput.addEventListener('keyup', updateSaveButtonState);
+    
     const originalRenderCurrentMealFoods = renderCurrentMealFoods;
     renderCurrentMealFoods = () => {
         originalRenderCurrentMealFoods();
-        saveMealBtn.disabled = !(mealNameInput.value.trim() && currentMeal.foods.length > 0);
+        updateSaveButtonState();
     }
+    
+    const removeFoodFromCurrentMeal = (index) => {
+        currentMeal.Alimentos.splice(index, 1);
+        renderCurrentMealFoods();
+    };
 
     // ============================================= //
     // ============= INITIALIZATION ================ //
