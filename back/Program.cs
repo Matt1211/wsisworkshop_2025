@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Google.Cloud.Vision.V1;
 using MyMinimalApi.models;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +33,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+var MapeamentoDaPastaDeImagens = Path.Combine(builder.Environment.ContentRootPath, "imagens_salvas");
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(MapeamentoDaPastaDeImagens),
+    RequestPath = "/imagens_salvas"
+});
 
 app.UseCors(MyAllowSpecificOrigins);
 

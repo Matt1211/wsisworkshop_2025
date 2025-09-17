@@ -6,10 +6,18 @@ document.addEventListener('DOMContentLoaded', () => {
     let meals = [];
     let currentMeal = {
         id: null,
-        name: '',
-        description: '',
-        foods: [],
-        totalNutrition: { calories: 0, protein: 0, fat: 0, carbs: 0 }
+
+        nome: '',
+
+        descricao: '',
+        alimentos: [],
+
+        totaisNutricionais: {
+            calorias: 0,
+            proteinas: 0,
+            gordurasTotais: 0,
+            carboidratos: 0
+        }
     };
     let compressedImageFile = null;
     let compressedImageFiles = [];
@@ -108,13 +116,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const renderCurrentMealFoods = () => {
         currentMealFoodsList.innerHTML = '';
-        currentMeal.Alimentos.forEach((food, index) => {
+        currentMeal.alimentos.forEach((food, index) => {
             const li = document.createElement('li');
             li.className = 'food-item';
             li.innerHTML = `
-            <div>
-                <p>${food.Nome}</p>
-                <span>${food.Calorias.toFixed(0)} kcal</span>
+            <div class="food-item-info">
+                <img src="${food.imagemSrc}" alt="${food.nome}" class="food-item-image">
+                <div>
+                    <p>${food.nome}</p>
+                    <span>${food.calorias.toFixed(0)} kcal</span>
+                </div>
             </div>
             <button class="button danger-button" data-index="${index}">X</button>
         `;
@@ -122,63 +133,67 @@ document.addEventListener('DOMContentLoaded', () => {
             currentMealFoodsList.appendChild(li);
         });
         updateTotalNutrition();
+        updateSaveButtonState();
     };
 
     const updateTotalNutrition = () => {
-        const totals = currentMeal.Alimentos.reduce((totals, food) => {
-            totals.Calorias += food.Calorias;
-            totals.Proteinas += parseFloat(food.Proteinas);
-            totals.GordurasTotais += parseFloat(food.GordurasTotais);
-            totals.Carboidratos += parseFloat(food.Carboidratos);
+        const totals = currentMeal.alimentos.reduce((totals, food) => {
+            totals.calorias += food.calorias;
+            totals.proteinas += parseFloat(food.proteinas);
+            totals.gordurasTotais += parseFloat(food.gordurasTotais);
+            totals.carboidratos += parseFloat(food.carboidratos);
             return totals;
-        }, { Calorias: 0, Proteinas: 0, GordurasTotais: 0, Carboidratos: 0 });
+        }, { calorias: 0, proteinas: 0, gordurasTotais: 0, carboidratos: 0 });
 
-        currentMeal.totalNutrition = totals;
+        currentMeal.totaisNutricionais = totals;
 
-        totalCaloriesEl.textContent = totals.Calorias.toFixed(0);
-        totalProteinEl.textContent = totals.Proteinas.toFixed(1);
-        totalFatEl.textContent = totals.GordurasTotais.toFixed(1);
-        totalCarbsEl.textContent = totals.Carboidratos.toFixed(1);
+        totalCaloriesEl.textContent = totals.calorias.toFixed(0);
+        totalProteinEl.textContent = totals.proteinas.toFixed(1);
+        totalFatEl.textContent = totals.gordurasTotais.toFixed(1);
+        totalCarbsEl.textContent = totals.carboidratos.toFixed(1);
     };
 
     const renderMealDetailView = (meal) => {
-        const totalNutrition = meal.Alimentos.reduce((totals, food) => {
-            totals.Calorias += food.Calorias;
-            totals.Proteinas += parseFloat(food.Proteinas);
-            totals.GordurasTotais += parseFloat(food.GordurasTotais);
-            totals.Carboidratos += parseFloat(food.Carboidratos);
+        const totalNutrition = meal.alimentos.reduce((totals, food) => {
+            totals.calorias += food.calorias;
+            totals.proteinas += parseFloat(food.proteinas);
+            totals.gordurasTotais += parseFloat(food.gordurasTotais);
+            totals.carboidratos += parseFloat(food.carboidratos);
             return totals;
-        }, { Calorias: 0, Proteinas: 0, GordurasTotais: 0, Carboidratos: 0 });
+        }, { calorias: 0, proteinas: 0, gordurasTotais: 0, carboidratos: 0 });
 
         mealDetailView.innerHTML = `
         <div class="view-header">
-            <h3 class="detail-header">${meal.Nome}</h3>
+            <h3 class="detail-header">${meal.nome}</h3>
             <button class="button danger-button" id="delete-meal-btn">Deletar Refeição</button>
         </div>
-        <p class="detail-description">${meal.Descricao || 'Nenhuma descrição fornecida.'}</p>
+        <p class="detail-description">${meal.descricao || 'Nenhuma descrição fornecida.'}</p>
         <div class="card">
             <h4>Nutrientes Totais da Refeição</h4>
             <div id="nutrition-totals">
-                <p><strong>Calorias:</strong> ${totalNutrition.Calorias.toFixed(0)} kcal</p>
-                <p><strong>Proteínas:</strong> ${totalNutrition.Proteinas.toFixed(1)} g</p>
-                <p><strong>Gorduras:</strong> ${totalNutrition.GordurasTotais.toFixed(1)} g</p>
-                <p><strong>Carboidratos:</strong> ${totalNutrition.Carboidratos.toFixed(1)} g</p>
-            </div>
+                <p><strong>Calorias:</strong> ${totalNutrition.calorias.toFixed(0)} kcal</p>
+                <p><strong>Proteínas:</strong> ${totalNutrition.proteinas.toFixed(1)} g</p>
+                <p><strong>Gorduras:</strong> ${totalNutrition.gordurasTotais.toFixed(1)} g</p>
+                <p><strong>Carboidratos:</strong> ${totalNutrition.carboidratos.toFixed(1)} g</p>
+            </div>        
         </div>
         <h4>Alimentos Individuais</h4>
-        ${meal.Alimentos.map(food => `
+        ${meal.alimentos.map(food => `
             <div class="card individual-food-card">
-                <strong>${food.Nome}</strong>
+                <div class="food-detail-header">
+                    <img src="${food.urlImagem}" alt="${food.nome}" class="food-detail-image">
+                    <strong>${food.nome}</strong>
+                </div>
                 <ul>
-                    <li>Calorias: ${food.Calorias.toFixed(0)} kcal</li>
-                    <li>Proteínas: ${food.Proteinas.toFixed(1)} g</li>
-                    <li>Gorduras: ${food.GordurasTotais.toFixed(1)} g</li>
-                    <li>Carboidratos: ${food.Carboidratos.toFixed(1)} g</li>
+                    <li>Calorias: ${food.calorias.toFixed(0)} kcal</li>
+                    <li>Proteínas: ${food.proteinas.toFixed(1)} g</li>
+                    <li>Gorduras: ${food.gordurasTotais.toFixed(1)} g</li>
+                    <li>Carboidratos: ${food.carboidratos.toFixed(1)} g</li>
                 </ul>
             </div>
         `).join('')}
     `;
-        mealDetailView.querySelector('#delete-meal-btn').addEventListener('click', () => deleteMeal(meal.Id));
+        mealDetailView.querySelector('#delete-meal-btn').addEventListener('click', () => deleteMeal(meal.id));
         showView('detail');
     };
 
@@ -196,20 +211,27 @@ document.addEventListener('DOMContentLoaded', () => {
         mealModal.classList.add('hidden');
         resetCurrentMeal();
     };
-    
+
     newMealBtn.addEventListener('click', openModal);
 
     saveMealBtn.addEventListener('click', async () => {
-        currentMeal.Nome = mealNameInput.value;
-        currentMeal.Descricao = mealDescriptionInput.value;
+        currentMeal.nome = mealNameInput.value;
+        currentMeal.descricao = mealDescriptionInput.value;
 
-        if (!currentMeal.Nome) {
+        if (!currentMeal.nome) {
             alert('Por favor, dê um nome para a refeição!');
             return;
         }
 
+        const mealDataToSend = {
+            nome: currentMeal.nome,
+            descricao: currentMeal.descricao,
+            alimentos: currentMeal.alimentos.map(({ imagemSrc, ...food }) => food)
+        };
+
         try {
-            await createMeal(currentMeal, compressedImageFiles);
+            const imageFilesToSend = compressedImageFiles.map(fileObj => fileObj.file);
+            await createMeal(mealDataToSend, imageFilesToSend);
             closeModal();
             await initializeApp();
             alert('Refeição salva com sucesso!');
@@ -245,9 +267,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             let firstImageHtml = '<div class="meal-list-item-image"></div>';
-            if (meal.alimentos && meal.alimentos.length > 0 && meal.alimentos[0].caminhoImagem) {
-                const imageUrl = `${API_BASE_URL}/${meal.alimentos[0].caminhoImagem}`;
-                firstImageHtml = `<img src="${imageUrl}" alt="${meal.nome}" class="meal-list-item-image">`;
+            if (meal.alimentos && meal.alimentos.length > 0 && meal.alimentos[0].urlImagem) {
+                firstImageHtml = `<img src="${meal.alimentos[0].urlImagem}" alt="${meal.nome}" class="meal-list-item-image">`;
             }
 
             li.innerHTML = `
@@ -287,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
         imagePreviewContainer.classList.add('hidden');
         const previewGrid = document.getElementById('image-preview-grid');
         previewGrid.innerHTML = '';
-        compressedImageFiles = [];
+        compressedImageFiles = []; // Limpa o array
 
         const options = {
             maxSizeMB: 0.5,
@@ -296,24 +317,33 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         try {
-            const compressionPromises = Array.from(event.target.files).map(file => imageCompression(file, options));
-            const compressedFiles = await Promise.all(compressionPromises);
-            compressedImageFiles = compressedFiles;
+            // Mapeia cada arquivo para uma promessa que comprime e lê o arquivo
+            const fileProcessingPromises = Array.from(event.target.files).map(file =>
+                imageCompression(file, options).then(compressedFile => {
+                    return new Promise(resolve => {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            // Resolve com um objeto contendo o arquivo E a URL de dados para exibição
+                            resolve({ file: compressedFile, dataURL: e.target.result });
+                        };
+                        reader.readAsDataURL(compressedFile);
+                    });
+                })
+            );
 
-            compressedFiles.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = document.createElement('img');
-                    img.src = e.target.result;
-                    previewGrid.appendChild(img);
-                };
-                reader.readAsDataURL(file);
+            const processedFiles = await Promise.all(fileProcessingPromises);
+            compressedImageFiles = processedFiles;
+
+            processedFiles.forEach(fileObj => {
+                const img = document.createElement('img');
+                img.src = fileObj.dataURL;
+                previewGrid.appendChild(img);
             });
 
             imagePreviewContainer.classList.remove('hidden');
 
         } catch (error) {
-            console.error("Erro ao comprimir as imagens:", error);
+            console.error("Erro ao processar as imagens:", error);
             alert("Ocorreu um erro ao processar as imagens.");
         } finally {
             loader.classList.add('hidden');
@@ -330,10 +360,16 @@ document.addEventListener('DOMContentLoaded', () => {
         analyzeImageBtn.disabled = true;
 
         try {
-            const foodsFromApi = await analyzeImagesApi(compressedImageFiles);
-            foodsFromApi.forEach(food => {
-                if (currentMeal.Alimentos.length < 5) {
-                    currentMeal.Alimentos.push(food);
+            const filesToAnalyze = compressedImageFiles.map(fileObj => fileObj.file);
+            const foodsFromApi = await analyzeImagesApi(filesToAnalyze);
+
+            foodsFromApi.forEach((food, index) => {
+                if (currentMeal.alimentos.length < 5) {
+                    const foodWithImage = {
+                        ...food,
+                        imagemSrc: compressedImageFiles[index].dataURL
+                    };
+                    currentMeal.alimentos.push(foodWithImage);
                 }
             });
             renderCurrentMealFoods();
@@ -341,7 +377,6 @@ document.addEventListener('DOMContentLoaded', () => {
             imagePreviewContainer.classList.add('hidden');
             document.getElementById('image-preview-grid').innerHTML = '';
             imageUploadInput.value = '';
-            compressedImageFiles = [];
 
         } catch (error) {
             console.error(error);
@@ -373,25 +408,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         let csvContent = "data:text/csv;charset=utf-8,";
-        csvContent += "Nome da Refeição,Descrição,Calorias,Proteínas (g),Gorduras (g),Carboidratos (g),Alimentos\n";
+        csvContent += "Nome da Refeição,Descrição,calorias,Proteínas (g),Gorduras (g),carboidratos (g),Alimentos\n";
 
         meals.forEach(meal => {
-            const foodNames = meal.Alimentos.map(f => f.Nome).join('; ');
-            const totalNutrition = meal.Alimentos.reduce((totals, food) => {
-                totals.Calorias += food.Calorias;
-                totals.Proteinas += parseFloat(food.Proteinas);
-                totals.GordurasTotais += parseFloat(food.GordurasTotais);
-                totals.Carboidratos += parseFloat(food.Carboidratos);
+            const foodNames = meal.alimentos.map(f => f.nome).join('; ');
+            const totalNutrition = meal.alimentos.reduce((totals, food) => {
+                totals.calorias += food.calorias;
+                totals.proteinas += parseFloat(food.proteinas);
+                totals.gordurasTotais += parseFloat(food.gordurasTotais);
+                totals.carboidratos += parseFloat(food.carboidratos);
                 return totals;
-            }, { Calorias: 0, Proteinas: 0, GordurasTotais: 0, Carboidratos: 0 });
-            
+            }, { calorias: 0, proteinas: 0, gordurasTotais: 0, carboidratos: 0 });
+
             const row = [
                 `"${meal.nome}"`,
                 `"${meal.descricao}"`,
-                totalNutrition.Calorias.toFixed(0),
-                totalNutrition.Proteinas.toFixed(1),
-                totalNutrition.GordurasTotais.toFixed(1),
-                totalNutrition.Carboidratos.toFixed(1),
+                totalNutrition.calorias.toFixed(0),
+                totalNutrition.proteinas.toFixed(1),
+                totalNutrition.gordurasTotais.toFixed(1),
+                totalNutrition.carboidratos.toFixed(1),
                 `"${foodNames}"`
             ].join(',');
             csvContent += row + "\n";
@@ -411,11 +446,18 @@ document.addEventListener('DOMContentLoaded', () => {
     // ============================================= //
     const resetCurrentMeal = () => {
         currentMeal = {
-            Id: null,
-            Nome: '',
-            Descricao: '',
-            Alimentos: [],
+            id: null,
+            nome: '',
+            descricao: '',
+            alimentos: [],
+            totaisNutricionais: {
+                calorias: 0,
+                proteinas: 0,
+                gordurasTotais: 0,
+                carboidratos: 0
+            }
         };
+
         mealNameInput.value = '';
         mealDescriptionInput.value = '';
         saveMealBtn.disabled = true;
@@ -434,21 +476,15 @@ document.addEventListener('DOMContentLoaded', () => {
             mealDetailView.innerHTML = '<p>Selecione uma refeição da lista para ver os detalhes, ou crie uma nova.</p>';
         }
     };
-    
+
     const updateSaveButtonState = () => {
-        saveMealBtn.disabled = !(mealNameInput.value.trim() && currentMeal.Alimentos.length > 0);
+        saveMealBtn.disabled = !(mealNameInput.value.trim() && currentMeal.alimentos.length > 0);
     };
 
     mealNameInput.addEventListener('keyup', updateSaveButtonState);
-    
-    const originalRenderCurrentMealFoods = renderCurrentMealFoods;
-    renderCurrentMealFoods = () => {
-        originalRenderCurrentMealFoods();
-        updateSaveButtonState();
-    }
-    
+
     const removeFoodFromCurrentMeal = (index) => {
-        currentMeal.Alimentos.splice(index, 1);
+        currentMeal.alimentos.splice(index, 1);
         renderCurrentMealFoods();
     };
 

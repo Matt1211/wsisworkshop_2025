@@ -89,6 +89,7 @@ public static class RefeicoesHandlers
     }
 
     public static async Task<IResult> CreateRefeicaoAsync(
+        HttpContext httpContext,
         [FromForm] string refeicaoJson,
         IFormFileCollection imagens,
         [FromServices] DadosRefeicaoService refeicaoService)
@@ -134,6 +135,8 @@ public static class RefeicoesHandlers
             refeicaoService.AdicionarRefeicao(refeicaoParaSalvar);
             Console.WriteLine("Nova refeição salva com sucesso em refeicoes.json.");
 
+            var refeicaoDto = MapearParaDto(refeicaoParaSalvar, httpContext);
+
             return Results.Created($"/refeicoes/{refeicaoParaSalvar.Id}", refeicaoParaSalvar);
         }
         catch (Exception ex)
@@ -141,6 +144,37 @@ public static class RefeicoesHandlers
             Console.WriteLine($"Ocorreu um erro ao salvar a refeição: {ex.Message}");
             return Results.Problem($"Ocorreu um erro interno: {ex.Message}");
         }
+    }
+
+    public static RefeicaoDto MapearParaDto(Refeicao refeicao, HttpContext httpContext)
+    {
+        var scheme = httpContext.Request.Scheme;
+        var host = httpContext.Request.Host;     
+
+        return new RefeicaoDto
+        {
+            Id = refeicao.Id,
+            Nome = refeicao.Nome,
+            Descricao = refeicao.Descricao,
+            DataDeCriacao = refeicao.DataDeCriacao,
+            Alimentos = refeicao.Alimentos.Select(comida => new ComidaDto
+            {
+                Id = comida.Id,
+                Nome = comida.Nome,
+                Descricao = comida.Descricao,
+                Calorias = comida.Calorias,
+                Proteinas = comida.Proteinas,
+                GordurasTotais = comida.GordurasTotais,
+                Carboidratos = comida.Carboidratos,
+                Fibras = comida.Fibras,
+                Acucares = comida.Acucares,
+                Sodio = comida.Sodio,
+                Porcao = comida.Porcao,
+                UrlImagem = !string.IsNullOrEmpty(comida.CaminhoImagem)
+                            ? $"{scheme}://{host}/{comida.CaminhoImagem}"
+                            : string.Empty
+            }).ToList()
+        };
     }
 
     private static Comida MapearUsdaParaComida(UsdaFood foodData, string termoOriginal)

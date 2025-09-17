@@ -358,3 +358,35 @@ textarea {
 .meal-list-item-details {
     flex-grow: 1;
 }
+
+.food-item-info {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Espaço entre a imagem e o texto */
+}
+
+.food-item-image {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+    object-fit: cover; /* Garante que a imagem preencha o espaço sem distorcer */
+}
+
+.food-detail-header {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Espaço entre a imagem e o nome */
+    margin-bottom: 10px; /* Espaço entre o cabeçalho e a lista de nutrientes */
+}
+
+.food-detail-image {
+    width: 60px;
+    height: 60px;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0; /* Previne que a imagem seja espremida */
+}
+
+.individual-food-card ul {
+    padding-left: 25px;
+}

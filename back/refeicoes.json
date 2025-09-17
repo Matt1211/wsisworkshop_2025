@@ -1,3 +1,66 @@
 [
-    
+  {
+    "Id": 1758088786,
+    "Nome": "Caf\u00E9 da Manh\u00E3",
+    "Descricao": "caf\u00E9zin bom pra num ingord\u00E1",
+    "Alimentos": [
+      {
+        "Id": 2165314,
+        "Nome": "PEANUT",
+        "Descricao": "Dados nutricionais para \u0027PEANUT\u0027",
+        "CaminhoImagem": "imagens_salvas/97970c34-4a8a-4b68-9e83-5cbc012ba84a.jpeg",
+        "Calorias": 464,
+        "Proteinas": 7.14,
+        "GordurasTotais": 21.4,
+        "Carboidratos": 64.3,
+        "Fibras": 0,
+        "Acucares": 42.9,
+        "Sodio": 304,
+        "Porcao": 100
+      },
+      {
+        "Id": 2490728,
+        "Nome": "UHT DAIRY PRODUCT WITH VEGETABLE OIL",
+        "Descricao": "Dados nutricionais para \u0027UHT DAIRY PRODUCT WITH VEGETABLE OIL\u0027",
+        "CaminhoImagem": "imagens_salvas/bebe5bca-3891-4fc3-b85c-99e4e0196478.jpeg",
+        "Calorias": 58,
+        "Proteinas": 2.08,
+        "GordurasTotais": 2.92,
+        "Carboidratos": 5.83,
+        "Fibras": 0,
+        "Acucares": 5.83,
+        "Sodio": 83,
+        "Porcao": 100
+      },
+      {
+        "Id": 1909132,
+        "Nome": "MILK",
+        "Descricao": "Dados nutricionais para \u0027MILK\u0027",
+        "CaminhoImagem": "imagens_salvas/7253295f-58dc-455d-bf22-588830953613.webp",
+        "Calorias": 55,
+        "Proteinas": 3.39,
+        "GordurasTotais": 2.12,
+        "Carboidratos": 5.08,
+        "Fibras": 0,
+        "Acucares": 5.08,
+        "Sodio": 55,
+        "Porcao": 100
+      },
+      {
+        "Id": 2461712,
+        "Nome": "SMALL BREAD",
+        "Descricao": "Dados nutricionais para \u0027SMALL BREAD\u0027",
+        "CaminhoImagem": "imagens_salvas/e06a4d5c-0b2f-4522-971c-b46da026ab76.webp",
+        "Calorias": 250,
+        "Proteinas": 0,
+        "GordurasTotais": 3.57,
+        "Carboidratos": 50,
+        "Fibras": 0,
+        "Acucares": 3.57,
+        "Sodio": 482,
+        "Porcao": 100
+      }
+    ],
+    "DataDeCriacao": "2025-09-17T05:59:46.8494154Z"
+  }
 ]
