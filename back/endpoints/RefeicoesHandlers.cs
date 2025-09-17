@@ -60,7 +60,7 @@ public static class RefeicoesHandlers
 
                 var apiKey = config["UsdaApiKey"];
                 var httpClient = httpClientFactory.CreateClient();
-                var requestUri = $"https://api.nal.usda.gov/fdc/v1/foods/search?query={Uri.EscapeDataString(termoDeBusca)}&pageSize=1&pageNumber=1&dataType=SR%20Legacy&api_key={apiKey}";
+                var requestUri = $"https://api.nal.usda.gov/fdc/v1/foods/search?query={Uri.EscapeDataString(termoDeBusca)}&pageSize=1&pageNumber=1&dataType=Branded&api_key={apiKey}";
                 var response = await httpClient.GetAsync(requestUri);
 
                 if (!response.IsSuccessStatusCode) continue;
