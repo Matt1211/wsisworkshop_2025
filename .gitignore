@@ -5,6 +5,8 @@
 # ===================================================================
 # Google Cloud credentials folder
 back/gl_app_crd/
+back/imagens_salvas
+back/refeicoes.json
 
 # User secrets and local configuration
 **/appsettings.Development.json
