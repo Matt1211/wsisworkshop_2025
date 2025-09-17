@@ -5,15 +5,14 @@ namespace MyMinimalApi.models
         public int Id { get; set; }
         public string Nome { get; set; } = string.Empty;
         public string Descricao { get; set; } = string.Empty;
-        public string ImagemUrl { get; set; } = string.Empty;
+        public string CaminhoImagem { get; set; } = string.Empty;
         public int Calorias { get; set; } = 0; // kcal
-        public float Proteina { get; set; } = 0; // g
-        public float Proteinas { get; set; } = 0; // g
-        public float GordurasTotais { get; set; } = 0; // g
-        public float Carboidratos { get; set; } = 0; // g
-        public float Fibras { get; set; } = 0; // g
-        public float Acucares { get; set; } = 0; // g
-        public float Sodio { get; set; } = 0; // mg
-        public float Porcao { get; set; } = 0; // g
+        public decimal Proteinas { get; set; } = 0; // g
+        public decimal GordurasTotais { get; set; } = 0; // g
+        public decimal Carboidratos { get; set; } = 0; // g
+        public decimal Fibras { get; set; } = 0; // g
+        public decimal Acucares { get; set; } = 0; // g
+        public decimal Sodio { get; set; } = 0; // mg
+        public decimal Porcao { get; set; } = 0; // g
     }
 }

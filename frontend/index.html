@@ -1,63 +1,63 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>What's on the Plate? - Nutrition Planner</title>
+    <title>O Que Tem no Prato? - Planejador de Refeições</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.2/dist/browser-image-compression.js"></script>
 </head>
 <body>
 
-    <!-- Modal -->
     <div id="meal-modal" class="modal hidden">
         <div class="modal-content panel">
             <div class="modal-header">
-                <h3 id="modal-title">Create New Meal</h3>
+                <h3 id="modal-title">Criar Nova Refeição</h3>
                 <button id="close-modal" class="button">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="meal-name">Meal Name</label>
-                    <input type="text" id="meal-name" placeholder="e.g., 'Post-Workout Lunch'">
+                    <label for="meal-name">Nome da Refeição</label>
+                    <input type="text" id="meal-name" placeholder="Ex: 'Almoço Pós-Treino'">
                 </div>
                 <div class="form-group">
-                    <label for="meal-description">Description</label>
-                    <textarea id="meal-description" rows="2" placeholder="A quick description of this meal."></textarea>
+                    <label for="meal-description">Descrição</label>
+                    <textarea id="meal-description" rows="2" placeholder="Uma breve descrição desta refeição."></textarea>
                 </div>
 
                 <div class="card" id="image-uploader-card">
-                    <h4>Add Food to Meal (up to 5)</h4>
-                    <p>Upload a photo of a food item to identify it and add its nutritional info.</p>
-                    <input type="file" id="image-upload-input" accept="image/*" style="display: none;">
-                    <button id="upload-trigger-btn" class="button primary-button">Upload Photo</button>
+                    <h4>Adicionar Alimento à Refeição (até 5)</h4>
+                    <p>Envie a foto de um alimento para identificá-lo e adicionar suas informações nutricionais.</p>
+                    <input type="file" id="image-upload-input" accept="image/*" style="display: none;" multiple>
+                    <button id="upload-trigger-btn" class="button primary-button">Enviar Foto</button>
                     <div id="image-preview-container" class="hidden">
-                        <img id="image-preview" src="#" alt="Image Preview"/>
-                        <button id="analyze-image-btn" class="button">Analyze Food</button>
+                        <div id="image-preview-grid"></div> 
+                        <button id="analyze-image-btn" class="button">Analisar Alimentos</button>
                     </div>
                     <div id="loader" class="hidden"></div>
                 </div>
 
                 <div id="current-meal-foods">
-                    <h4>Foods in This Meal</h4>
+                    <h4>Alimentos Nesta Refeição</h4>
                     <ul id="food-item-list"></ul>
                 </div>
 
                 <div id="total-nutrition-summary" class="card">
-                    <h4>Total Meal Nutrition</h4>
+                    <h4>Nutrientes Totais da Refeição</h4>
                     <div id="nutrition-totals">
-                        <p><strong>Calories:</strong> <span id="total-calories">0</span> kcal</p>
-                        <p><strong>Protein:</strong> <span id="total-protein">0</span> g</p>
-                        <p><strong>Fat:</strong> <span id="total-fat">0</span> g</p>
-                        <p><strong>Carbs:</strong> <span id="total-carbs">0</span> g</p>
+                        <p><strong>Calorias:</strong> <span id="total-calories">0</span> kcal</p>
+                        <p><strong>Proteínas:</strong> <span id="total-protein">0</span> g</p>
+                        <p><strong>Gorduras:</strong> <span id="total-fat">0</span> g</p>
+                        <p><strong>Carboidratos:</strong> <span id="total-carbs">0</span> g</p>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button id="save-meal-btn" class="button success-button" disabled>Save Meal</button>
-                <button id="cancel-meal-btn" class="button secondary-button">Cancel</button>
+                <button id="save-meal-btn" class="button success-button" disabled>Salvar Refeição</button>
+                <button id="cancel-meal-btn" class="button secondary-button">Cancelar</button>
             </div>
         </div>
     </div>
@@ -65,12 +65,12 @@
     <div id="app-container">
         <aside class="panel" id="left-panel">
             <header class="panel-header">
-                <h2>My Meals</h2>
-                <button id="new-meal-btn" class="button primary-button">+ Create New Meal</button>
+                <h2>Minhas Refeições</h2>
+                <button id="new-meal-btn" class="button primary-button">+ Criar Nova Refeição</button>
             </header>
             <div id="meal-list-container">
                 <div id="empty-meal-list" class="empty-state">
-                    <p>You haven't created any meals yet. Click "Create New Meal" to get started!</p>
+                    <p>Você ainda não criou nenhuma refeição. Clique em "Criar Nova Refeição" para começar!</p>
                 </div>
                 <ul id="meal-list"></ul>
             </div>
@@ -78,15 +78,14 @@
 
         <main class="panel" id="right-panel">
             <div class="view-header">
-                <h3>Meal Details</h3>
+                <h3>Detalhes da Refeição</h3>
                 <div class="header-actions">
-                    <button id="export-btn" class="button secondary-button">Export All to CSV</button>
+                    <button id="export-btn" class="button secondary-button">Exportar Tudo para CSV</button>
                 </div>
             </div>
 
             <div id="meal-detail-view">
-                <!-- Meal details will be dynamically inserted here -->
-            </div>
+                </div>
         </main>
     </div>
 
