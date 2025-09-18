@@ -21,12 +21,5 @@ public static class RefeicoesEndpoints
             }
             return Results.NotFound();
         });
-
-        group.MapPost("/analyze", RefeicoesHandlers.AnalyzeImagesAsync)
-             .DisableAntiforgery();
-        
-        group.MapPost("/", (HttpContext httpContext, [FromForm] string refeicaoJson, IFormFileCollection imagens, [FromServices] DadosRefeicaoService service) =>
-            RefeicoesHandlers.CreateRefeicaoAsync(httpContext, refeicaoJson, imagens, service))
-             .DisableAntiforgery();
     }
 }

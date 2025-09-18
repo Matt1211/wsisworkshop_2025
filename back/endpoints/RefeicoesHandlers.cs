@@ -5,26 +5,6 @@ using System.Text.Json;
 
 public static class RefeicoesHandlers
 {
-    private static readonly List<string> termosGenericos = new List<string> // Lista de termos genéricos a serem ignorados para classificação de alimentos
-    {
-        // Categorias Gerais e Tipos de Prato
-        "Food", "Dish", "Cuisine", "Meal", "Recipe", "Gastronomy", "Nourishment", "Edible", "Platter", "Gourmet", "Take-out", "Street food", "Fast food", "biscuit",
-
-        // Componentes de uma Refeição
-        "Appetizer", "Main course", "Side dish", "Dessert", "Salad", "Soup", "Snack", "Breakfast", "Lunch", "Dinner", "Brunch",
-
-        // Ingredientes e Grupos Alimentares
-        "Ingredient", "Produce", "Fruit", "Vegetable", "Meat", "Poultry", "Seafood", "Fish", "Pasta", "Noodle", "Rice", "Grain", "Legume", "Dairy", "Cheese", "Herb", "Spice", "Nut", "Seed",
-
-        // Panificação e Confeitaria
-        "Bakery", "Pastry", "Bread", "Cake", "Cookie", "Pie", "Tart", "Muffin", "Croissant",
-
-        // Bebidas
-        "Beverage", "Drink", "Juice", "Smoothie", "Coffee", "Tea", "Cocktail", "Wine",
-
-        // Métodos de Cocção e Apresentação
-        "Grilled", "Fried", "Roasted", "Baked", "Steamed", "Sautéed", "Barbecue", "Smoked", "Raw", "Sliced", "Garnish"
-    };
 
     public static async Task<IResult> AnalyzeImagesAsync(
         IFormFileCollection imagens,
@@ -45,33 +25,6 @@ public static class RefeicoesHandlers
             foreach (var imagem in imagens)
             {
                 if (imagem.Length == 0) continue;
-
-                var imageFromStream = await Image.FromStreamAsync(imagem.OpenReadStream());
-                var labels = await visionClient.DetectLabelsAsync(imageFromStream);
-
-                var melhorPalpite = labels.Where(l => !termosGenericos.Contains(l.Description, StringComparer.OrdinalIgnoreCase))
-                                            .OrderByDescending(l => l.Score).FirstOrDefault() ?? labels.OrderByDescending(l => l.Score).FirstOrDefault();
-
-                if (melhorPalpite is null) continue;
-
-                var termoDeBusca = melhorPalpite.Description;
-                if (termoDeBusca.Contains("burger", StringComparison.OrdinalIgnoreCase))
-                    termoDeBusca = "Hamburger";
-
-                var apiKey = config["UsdaApiKey"];
-                var httpClient = httpClientFactory.CreateClient();
-                var requestUri = $"https://api.nal.usda.gov/fdc/v1/foods/search?query={Uri.EscapeDataString(termoDeBusca)}&pageSize=1&pageNumber=1&dataType=Branded&api_key={apiKey}";
-                var response = await httpClient.GetAsync(requestUri);
-
-                if (!response.IsSuccessStatusCode) continue;
-
-                var usdaResult = await response.Content.ReadFromJsonAsync<UsdaSearchResult>();
-                var foodData = usdaResult?.foods?.FirstOrDefault();
-
-                if (foodData == null) continue;
-
-                var novaComida = MapearUsdaParaComida(foodData, termoDeBusca);
-                listaDeAlimentos.Add(novaComida);
             }
 
             if (listaDeAlimentos.Count == 0)
