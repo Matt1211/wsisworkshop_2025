@@ -113,6 +113,6 @@ Agora você pode interagir com a aplicação, criar refeições e analisar image
 
 Para um guia passo a passo, com explicações mais aprofundadas sobre o código, os conceitos de Minimal APIs, e como configurar as APIs externas em detalhes, acesse o tutorial completo no Notion:
 
-➡️ **[Link para o Tutorial Completo no Notion (a ser inserido aqui)]**
+➡️ **https://www.notion.so/Central-do-Minicurso-2722c1a082988064a969f02c61e8cfdd**
 
 -----
